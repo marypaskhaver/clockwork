@@ -1,0 +1,34 @@
+cabal-version:       2.2
+
+name:                clockwork
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/marypaskhaver/clockwork#readme
+license:             BSD-3-Clause
+license-file:        LICENSE
+author:              Mary Paskhaver
+maintainer:          mary.paskhaver@gmail.com
+copyright:           2025 Mary Paskhaver
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+
+executable clockwork
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-record-updates
+                       -Wincomplete-uni-patterns
+                       -Wmissing-export-lists
+                       -Wmissing-home-modules
+                       -Wpartial-fields
+                       -Wredundant-constraints
+
+source-repository head
+  type:     git
+  location: https://github.com/marypaskhaver/clockwork
