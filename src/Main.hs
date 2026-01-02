@@ -9,7 +9,7 @@ import Types
 
 main :: IO ()
 main = do
-  putStrLn $ "To run this program in ghci, use :run main \"<command>\" \"<file_path>\"" ++
+  putStrLn $ "To run this program in ghci, use :run main <command> <file_path>" ++
            "\n\nPossible commands: I'll list here when I build them." ++
            "\n\nTime ranges in the given file must be line-separated and in the formats: hh:mmA/P-hh:mmA/P\n"
   -- TODO: Add a config argument to allow the user to customize how they want the program to 
