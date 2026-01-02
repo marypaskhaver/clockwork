@@ -11,7 +11,8 @@ main :: IO ()
 main = do
   putStrLn $ "To run this program in ghci, use :run main <command> <file_path>" ++
            "\n\nPossible commands: I'll list here when I build them." ++
-           "\n\nTime ranges in the given file must be line-separated and in the formats: hh:mmA/P-hh:mmA/P\n"
+           "\n\nTime ranges in the given file must be line-separated and in the formats: hh:mmA/P-hh:mmA/P\n" ++
+           "Currently, if the file at the given path contains a range in an invalid format, the program will ignore it.\n"
   -- TODO: Add a config argument to allow the user to customize how they want the program to 
   -- interpret invalid lines of input. For example: Stop the entire program vs. skip the invalid line.
   arguments <- getArgs
