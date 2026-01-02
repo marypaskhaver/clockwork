@@ -28,8 +28,8 @@ main = do
       let potentialTimeRanges = lines contents
           parsedTimeRangeLengths = fmap getLengthOfTimeRange potentialTimeRanges
           definedTimeRangeLengths = catMaybes parsedTimeRangeLengths
-
-      putStrLn $ "Lengths of ranges: " ++ show definedTimeRangeLengths
+          summedTimeRangeLengths = sum definedTimeRangeLengths -- Because Sum is the only one valid command for now
+      putStrLn (minutesToString summedTimeRangeLengths)
 
       hClose handle
 
