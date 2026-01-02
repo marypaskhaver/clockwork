@@ -1,5 +1,3 @@
-{-# LANGUAGE RecordWildCards #-}
-
 module Types where
 
 type Minutes = Int
