@@ -93,3 +93,12 @@ splitTwain :: (Char -> Bool) -> String -> (String, String)
 splitTwain predicate string = do
   let (beforeDelimiter, delimiterAndAfter) = break predicate string
   (beforeDelimiter, drop 1 delimiterAndAfter)
+
+-- TODO: Add a config argument that allows the user to specify how they want time ranges displayed. For example,
+-- as minutes, hours and minutes, days and hours and minutes, etc.
+minutesToString :: Minutes -> String
+minutesToString minutes = do
+  let minutesInAnHour = 60
+      hours = minutes `div` minutesInAnHour
+      remainingMinutes = minutes `mod` minutesInAnHour
+  "Hours: " ++ (show hours) ++ ", Minutes: " ++ (show remainingMinutes)
