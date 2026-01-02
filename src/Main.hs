@@ -9,11 +9,12 @@ import Types
 
 main :: IO ()
 main = do
-  putStrLn $ "To run this program in ghci, use :run main <command> <file_path>" ++
-           "\n\nPossible commands: I'll list here when I build them." ++
-           "\n\nTime ranges in the given file must be line-separated and in the formats: hh:mmA/P-hh:mmA/P\n" ++
-           "Currently, if the file at the given path contains a range in an invalid format, the program will ignore it.\n"
-  -- TODO: Add a config argument to allow the user to customize how they want the program to 
+  putStrLn $
+    "To run this program in ghci, use :run main <command> <file_path>"
+      ++ "\n\nPossible commands: I'll list here when I build them."
+      ++ "\n\nTime ranges in the given file must be line-separated and in the formats: hh:mmA/P-hh:mmA/P\n"
+      ++ "Currently, if the file at the given path contains a range in an invalid format, the program will ignore it.\n"
+  -- TODO: Add a config argument to allow the user to customize how they want the program to
   -- interpret invalid lines of input. For example: Stop the entire program vs. skip the invalid line.
   arguments <- getArgs
 
@@ -26,19 +27,19 @@ main = do
       let potentialTimeRanges = lines contents
           parsedTimeRangeLengths = fmap getLengthOfTimeRange potentialTimeRanges
           definedTimeRangeLengths = catMaybes parsedTimeRangeLengths
-      
+
       putStrLn $ "Lengths of ranges: " ++ show definedTimeRangeLengths
-            
+
       hClose handle
-  
+
   putStrLn $ show arguments
 
 parseArguments :: [String] -> Either ArgumentsError (String, FilePath) -- TODO: Replace String with a sum type.
 parseArguments [] = Left TooFew
 parseArguments [_] = Left TooFew
 parseArguments (potentialCommand : rest) = do
-  parseCommand potentialCommand >>= \command -> do 
-    case rest of 
+  parseCommand potentialCommand >>= \command -> do
+    case rest of
       [filePath] -> Right (command, filePath)
       _ -> Left TooMany
   where
@@ -51,14 +52,14 @@ getLengthOfTimeRange range = do
   let (potentialStartTime, potentialEndTime) = splitTwain (== '-') range
 
   case (parseTimeToMinutes potentialStartTime, parseTimeToMinutes potentialEndTime) of
-    (Just (startMinutes, startPeriod), Just (endMinutes, endPeriod)) -> Just $ do 
+    (Just (startMinutes, startPeriod), Just (endMinutes, endPeriod)) -> Just $ do
       case (startPeriod, endPeriod) of
         (P, A) -> endMinutes + (24 * 60) - startMinutes
-        _      -> endMinutes - startMinutes
+        _ -> endMinutes - startMinutes
     _ -> Nothing
   where
     -- The given time of the day in minutes. For example:
-    --  12:00A = 0 minutes 
+    --  12:00A = 0 minutes
     --  01:00A = 60 minutes
     --  12:00P = 720 minutes
     --  01:00P = 780 minutes
@@ -75,7 +76,7 @@ getLengthOfTimeRange range = do
 
       mPeriod >>= \period -> do
         let (hourString, minuteString) = splitTwain (== ':') potentialSeparatedNumbers
-        
+
         guard (length hourString == 2 && length minuteString == 2)
 
         case (readMaybe hourString, readMaybe minuteString) of
