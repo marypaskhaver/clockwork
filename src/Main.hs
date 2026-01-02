@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Control.Monad
+import Data.Char
 import Data.Maybe
 import System.Environment
 import System.IO
@@ -11,7 +12,7 @@ main :: IO ()
 main = do
   putStrLn $
     "To run this program in ghci, use :run main <command> <file_path>"
-      ++ "\n\nPossible commands: I'll list here when I build them."
+      ++ "\n\nPossible commands: sum"
       ++ "\n\nTime ranges in the given file must be line-separated and in the formats: hh:mmA/P-hh:mmA/P\n"
       ++ "Currently, if the file at the given path contains a range in an invalid format, the program will ignore it.\n"
   -- TODO: Add a config argument to allow the user to customize how they want the program to
@@ -34,7 +35,7 @@ main = do
 
   putStrLn $ show arguments
 
-parseArguments :: [String] -> Either ArgumentsError (String, FilePath) -- TODO: Replace String with a sum type.
+parseArguments :: [String] -> Either ArgumentsError (Command, FilePath)
 parseArguments [] = Left TooFew
 parseArguments [_] = Left TooFew
 parseArguments (potentialCommand : rest) = do
@@ -44,7 +45,7 @@ parseArguments (potentialCommand : rest) = do
       _ -> Left TooMany
   where
     -- TODO: Implement once you define commands to perform on time ranges in files.
-    parseCommand potential = Right potential
+    parseCommand potential = if (map toLower potential == "sum") then Right Sum else Left InvalidCommand
 
 -- The length of a given time range in minutes.
 getLengthOfTimeRange :: String -> Maybe Minutes
