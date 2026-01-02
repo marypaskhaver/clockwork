@@ -1,5 +1,6 @@
 module Main (main) where
 
+import Control.Monad
 import Data.Maybe
 import Data.Traversable
 import System.Environment
@@ -63,9 +64,9 @@ getLengthOfTimeRange range = do
   where
     -- The given time of the day in minutes. For example:
     --  12:00A = 0 minutes 
-    --   1:00A = 60 minutes
+    --  01:00A = 60 minutes
     --  12:00P = 720 minutes
-    --   1:00P = 780 minutes
+    --  01:00P = 780 minutes
     -- We're expecting time here to be in the format hh:mmA/P
     parseTimeToMinutes :: String -> Maybe (Minutes, Period)
     parseTimeToMinutes time = do
@@ -75,14 +76,19 @@ getLengthOfTimeRange range = do
             "P" -> Just P
             _ -> Nothing
 
+      guard (length potentialSeparatedNumbers == 5)
+
       maybe
         Nothing
         id
         $ for mPeriod
         $ \period -> do
-          let (hourString, minuteString) = break (== ':') potentialSeparatedNumbers
+          let (hourString, colonAndMinuteString) = break (== ':') potentialSeparatedNumbers
+              minuteString = drop 1 colonAndMinuteString
+          
+          guard (length hourString == 2 && length minuteString == 2)
 
-          case (readMaybe hourString, readMaybe (drop 1 minuteString)) of
+          case (readMaybe hourString, readMaybe minuteString) of
             (Just hour, Just minute) -> do
               if (hour < 0 || hour > 12 || minute < 0 || minute > 59)
                 then Nothing
