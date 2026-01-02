@@ -33,8 +33,6 @@ main = do
 
       hClose handle
 
-  putStrLn $ show arguments
-
 parseArguments :: [String] -> Either ArgumentsError (Command, FilePath)
 parseArguments [] = Left TooFew
 parseArguments [_] = Left TooFew
