@@ -12,4 +12,4 @@ instance Show ArgumentsError where
   show InvalidCommand = "Invalid command."
 
 -- Valid commands to perform on time ranges
-data Command = Sum
+data Command = Sum | Min

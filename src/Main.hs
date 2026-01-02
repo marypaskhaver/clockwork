@@ -22,15 +22,19 @@ main = do
 
   case parseArguments arguments of
     Left argumentError -> error (show argumentError)
-    Right (_command, filePath) -> do
+    Right (command, filePath) -> do
       handle <- openFile filePath ReadMode
       contents <- hGetContents handle
 
       let potentialTimeRanges = lines contents
           parsedTimeRangeLengths = fmap getLengthOfTimeRange potentialTimeRanges
           definedTimeRangeLengths = catMaybes parsedTimeRangeLengths
-          summedTimeRangeLengths = sum definedTimeRangeLengths -- Because Sum is the only one valid command for now
-      putStrLn (minutesToString summedTimeRangeLengths)
+
+      case command of
+        Sum -> do
+          let summedTimeRangeLengths = sum definedTimeRangeLengths
+          putStrLn (minutesToString summedTimeRangeLengths)
+        Min -> putStrLn "Not implemented yet."
 
       hClose handle
 
@@ -44,7 +48,12 @@ parseArguments (potentialCommand : rest) = do
       _ -> Left TooMany
   where
     -- TODO: Implement once you define commands to perform on time ranges in files.
-    parseCommand potential = if (map toLower potential == "sum") then Right Sum else Left InvalidCommand
+    parseCommand potential
+      | (lowered == "sum") = Right Sum
+      | (lowered == "min") = Right Min
+      | otherwise = Left InvalidCommand
+      where
+        lowered = map toLower potential
 
 -- The length of a given time range in minutes.
 getLengthOfTimeRange :: String -> Maybe Minutes
