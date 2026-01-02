@@ -2,7 +2,6 @@ module Main (main) where
 
 import Control.Monad
 import Data.Maybe
-import Data.Traversable
 import System.Environment
 import System.IO
 import Text.Read
@@ -48,12 +47,7 @@ parseArguments (potentialCommand : rest) = do
 -- The length of a given time range in minutes.
 getLengthOfTimeRange :: String -> Maybe Minutes
 getLengthOfTimeRange range = do
-  let splitRange :: (String, String)
-      splitRange = do
-        let (beforeDash, afterAndIncludingDash) = break (== '-') range
-        (beforeDash, (drop 1 afterAndIncludingDash))
-
-  let (potentialStartTime, potentialEndTime) = splitRange
+  let (potentialStartTime, potentialEndTime) = splitTwain (== '-') range
 
   case (parseTimeToMinutes potentialStartTime, parseTimeToMinutes potentialEndTime) of
     (Just (startMinutes, startPeriod), Just (endMinutes, endPeriod)) -> Just $ do 
@@ -78,19 +72,21 @@ getLengthOfTimeRange range = do
 
       guard (length potentialSeparatedNumbers == 5)
 
-      maybe
-        Nothing
-        id
-        $ for mPeriod
-        $ \period -> do
-          let (hourString, colonAndMinuteString) = break (== ':') potentialSeparatedNumbers
-              minuteString = drop 1 colonAndMinuteString
-          
-          guard (length hourString == 2 && length minuteString == 2)
+      mPeriod >>= \period -> do
+        let (hourString, minuteString) = splitTwain (== ':') potentialSeparatedNumbers
+        
+        guard (length hourString == 2 && length minuteString == 2)
 
-          case (readMaybe hourString, readMaybe minuteString) of
-            (Just hour, Just minute) -> do
-              if (hour < 0 || hour > 12 || minute < 0 || minute > 59)
-                then Nothing
-                else Just $ ((hour * 60) + (if hour < 12 && period == P then (12 * 60) else 0) + minute, period)
-            (_, _) -> Nothing
+        case (readMaybe hourString, readMaybe minuteString) of
+          (Just hour, Just minute) -> do
+            if (hour < 0 || hour > 12 || minute < 0 || minute > 59)
+              then Nothing
+              else Just $ ((hour * 60) + (if hour < 12 && period == P then (12 * 60) else 0) + minute, period)
+          (_, _) -> Nothing
+
+-- Splits a String into a tuple where the first item is everything before the character that
+-- matches the predicate and the second is everything after it.
+splitTwain :: (Char -> Bool) -> String -> (String, String)
+splitTwain predicate string = do
+  let (beforeDelimiter, delimiterAndAfter) = break predicate string
+  (beforeDelimiter, drop 1 delimiterAndAfter)
